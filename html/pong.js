@@ -177,7 +177,17 @@ window.pong = {};
       ctx.fillStyle = PADDLE_COLOR;
       ctx.fillRect(p.paddle.x, p.paddle.y, p.paddle.width, p.paddle.height);
       scores[i].innerText = p.score;
-      if (p.score >= MAX_SCORE) {
+    }
+  }
+
+  function update(ball, players, keysDown) {
+    updatePlayers(players, ball, keysDown);
+    updateBallAndScore(ball, players);
+  }
+
+  function checkWinner(players) {
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].score >= MAX_SCORE) {
         if (i == PLAYER_INDEX) alert("You Won!");
         else alert("You Lost...");
         location.href = location.href;
@@ -197,9 +207,9 @@ window.pong = {};
   exports.getScoreDisplays = getScoreDisplays;
   exports.createCtx = createCtx;
   exports.listenKeyPresses = listenKeyPresses;
-  exports.updateBallAndScore = updateBallAndScore;
-  exports.updatePlayers = updatePlayers;
+  exports.update = update;
   exports.render = render;
+  exports.checkWinner = checkWinner;
 })(pong);
 
 (function () {
@@ -214,9 +224,9 @@ window.pong = {};
     function(callback) { window.setTimeout(callback, 1000/60) };
 
   animate(function step() {
-    pong.updatePlayers(players, ball, keysDown);
-    pong.updateBallAndScore(ball, players);
+    pong.update(ball, players, keysDown);
     pong.render(ctx, ball, players, scores);
+    pong.checkWinner(players);
     animate(step);
   });
 })();
